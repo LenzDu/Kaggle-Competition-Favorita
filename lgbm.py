@@ -4,7 +4,6 @@ import numpy as np
 from sklearn.metrics import mean_squared_error
 import lightgbm as lgb
 import gc
-# from sklearn.linear_model import Lasso, LogisticRegression, LinearRegression
 
 from Utils import *
 
@@ -118,23 +117,11 @@ for i in range(n_range):
     X_l.append(X_tmp)
     y_l.append(y_tmp)
     
-# t2016 = date(2016, 8, 17)
-# n_range = 7
-# for i in range(n_range):
-#     print(i, end='..')
-#     delta = timedelta(days=7 * i)
-#     X_tmp, y_tmp = prepare_dataset(t2016 - delta)
-#     X_tmp['year'] = 2016
-#     X_l.append(X_tmp)
-#     y_l.append(y_tmp)
-    
 X_train = pd.concat(X_l, axis=0)
 y_train = np.concatenate(y_l, axis=0)
 del X_l, y_l
 X_val, y_val = prepare_dataset(date(2017, 7, 26))
-# X_val['year'] = 2017
 X_test = prepare_dataset(date(2017, 8, 16), is_train=False)
-# X_test['year'] = 2017
 
 params = {
     'num_leaves': 31,
@@ -153,55 +140,14 @@ print("Training and predicting models...")
 MAX_ROUNDS = 700
 val_pred = []
 test_pred = []
-# non_valid_pred = []
 # best_rounds = []
 cate_vars = ['family', 'perish', 'store_nbr', 'store_cluster', 'store_type']
 w = (X_val["perish"] * 0.25 + 1) / (X_val["perish"] * 0.25 + 1).mean()
 
 for i in range(16):
-#     print("=" * 50)
-    print("Step %d" % (i+1))
-#     print("=" * 50)
-    
-#     X_train_copy = X_train.copy()
-#     X_val_copy = X_val.copy()
-#     X_test_copy = X_test.copy()
-    
-#     droplist = []
-#     for j in range(7):
-#         if i%7 != j:
-#             X_train_copy.drop('mean_4_dow{}_2017'.format(j),1, inplace=True)
-#             X_train_copy.drop('mean_20_dow{}_2017'.format(j),1, inplace=True)
-#             X_val_copy.drop('mean_4_dow{}_2017'.format(j),1, inplace=True)
-#             X_val_copy.drop('mean_20_dow{}_2017'.format(j),1, inplace=True)
-#     for j in range(14):
-#         if i<j:
-#             X_train_copy.drop("promo_{}".format(j),1, inplace=True)
-#             X_val_copy.drop("promo_{}".format(j),1, inplace=True)
-            
-    
-#     if i > 0:
-#         yfit = bst.predict(X_train)
-#         X_train['lastday_fitted_relu'] = np.clip(normalize(yfit),0,1000)
-#         X_val['lastday_fitted_relu'] = np.clip(normalize(val_pred[i-1]),0,1000)
-#     lr = LinearRegression()
-#     lr.fit(X_train.fillna(0).values, y_train[:, i])
-#     X_train_copy['lr_prediction'] = lr.predict(X_train.fillna(0).values)
-#     X_val_copy['lr_prediction'] = lr.predict(X_val.fillna(0).values)
-#     X_test_copy['lr_prediction'] = lr.predict(X_test.fillna(0).values)
-    
-#     lr = LinearRegression()
-#     lr.fit(X_train.fillna(0).values, y_train.mean(axis=1))
-#     X_train_copy['lr_prediction_mean'] = lr.predict(X_train.fillna(0).values)
-#     X_val_copy['lr_prediction_mean'] = lr.predict(X_val.fillna(0).values)
-#     X_test_copy['lr_prediction_mean'] = lr.predict(X_test.fillna(0).values)
 
-#     lr = LogisticRegression()
-#     lr.fit(X_train.fillna(0), (y_train[:, i]==0).astype('int'))
-#     X_train_copy['lr_is0'] = lr.predict_proba(X_train.fillna(0))[:,1]
-#     X_val_copy['lr_is0'] = lr.predict_proba(X_val.fillna(0))[:,1]
-#     X_test_copy['lr_is0'] = lr.predict_proba(X_test.fillna(0))[:,1]
-    
+    print("Step %d" % (i+1))
+
     dtrain = lgb.Dataset(
         X_train, label=y_train[:, i],
         categorical_feature=cate_vars,
@@ -214,10 +160,10 @@ for i in range(16):
         params, dtrain, num_boost_round=MAX_ROUNDS,
         valid_sets=[dtrain, dval], verbose_eval=100)
 
-#     print("\n".join(("%s: %.2f" % x) for x in sorted(
-#         zip(X_train.columns, bst.feature_importance("gain")),
-#         key=lambda x: x[1], reverse=True)[:15]))
-#     best_rounds.append(bst.best_iteration or MAX_ROUNDS)
+    print("\n".join(("%s: %.2f" % x) for x in sorted(
+        zip(X_train.columns, bst.feature_importance("gain")),
+        key=lambda x: x[1], reverse=True)[:15]))
+    best_rounds.append(bst.best_iteration or MAX_ROUNDS)
 
     val_pred.append(bst.predict(X_val, num_iteration=bst.best_iteration or MAX_ROUNDS))
     test_pred.append(bst.predict(X_test, num_iteration=bst.best_iteration or MAX_ROUNDS))

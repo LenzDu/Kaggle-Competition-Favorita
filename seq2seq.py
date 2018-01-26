@@ -12,7 +12,7 @@ from keras import optimizers
 import gc
 
 from Utils import *
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # suppress tf warnings
 
 timesteps = 365
 
@@ -47,8 +47,6 @@ Xtest, _ = create_dataset(df, promo_df, items, stores, timesteps, date(2017, 8, 
 w = (Xval[7][:, 0, 2] * 0.25 + 1) / (Xval[7][:, 0, 2] * 0.25 + 1).mean()
 
 del df, promo_df; gc.collect()
-# np.savez('seq2seq_cached.npz', Xtrain=Xtrain, Ytrain=Ytrain, promo=aux_train['promo'], yearAgo=aux_train['yearAgo'],
-#          quarterAgo=aux_train['quarterAgo'], weekday=aux_train['weekday'], dom=aux_train['dom'], cat_features=aux_train['cat_features'], item_mean=aux_train['item_mean'])
 
 # Note
 # current best: add item_mean, dim: 50, all as tensor ~ 3500 (~3630 in new cv)
@@ -74,7 +72,6 @@ dom_embed_encode = Embedding(31, 4, input_length=timesteps+16)(dom_in)
 # weekday_onehot = Lambda(K.one_hot, arguments={'num_classes': 7}, output_shape=(timesteps+16, 7))(weekday_in)
 
 # aux input
-# [item_family, item_class, item_perish, store_nbr, store_cluster, store_type]
 cat_features = Input(shape=(timesteps+16, 6))
 item_family = Lambda(lambda x: x[:, :, 0])(cat_features)
 item_class = Lambda(lambda x: x[:, :, 1])(cat_features)

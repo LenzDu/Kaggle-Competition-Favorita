@@ -10,7 +10,7 @@ from keras import optimizers
 import gc
 
 from Utils import *
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # suppress tf warnings
 
 df, promo_df, items, stores = load_unstack('all')
 
@@ -43,15 +43,15 @@ Xval, Yval = create_dataset(df, promo_df, items, stores, timesteps, date(2017, 7
 Xtest, _ = create_dataset(df, promo_df, items, stores, timesteps, date(2017, 8, 16),
                                     aux_as_tensor=False, is_train=False, reshape_output=2)
 
-w = (Xval[7][:, 2] * 0.25 + 1) / (Xval[7][:, 2] * 0.25 + 1).mean()
+w = (Xval[7][:, 2] * 0.25 + 1) / (Xval[7][:, 2] * 0.25 + 1).mean() # validation weight: 1.25 if perishable and 1 otherwise per competition rules
 
 del df, promo_df; gc.collect()
 
-print('current no promo 2')
+print('current no promo 2') # log info
 
 latent_dim = 32
 
-#################################### From encoder: all as tenser#############################################################
+# Define input
 # seq input
 seq_in = Input(shape=(timesteps, 1))
 is0_in = Input(shape=(timesteps, 1))
@@ -70,7 +70,6 @@ dom_embed_encode = Embedding(31, 4, input_length=timesteps+16)(dom_in)
 # weekday_onehot = Lambda(K.one_hot, arguments={'num_classes': 7}, output_shape=(timesteps+16, 7))(weekday_in)
 
 # aux input
-# [item_family, item_class, item_perish, store_nbr, store_cluster, store_type]
 cat_features = Input(shape=(6,))
 item_family = Lambda(lambda x: x[:, 0, None])(cat_features)
 item_class = Lambda(lambda x: x[:, 1, None])(cat_features)
@@ -91,8 +90,8 @@ encode_slice = Lambda(lambda x: x[:, :timesteps, :])
 # encode_features = encode_slice(encode_features)
 
 x_in = concatenate([seq_in, encode_slice(promo_in), item_mean_in], axis=2)
-##########################################################################################################
 
+# Define network
 # c0 = TimeDistributed(Dense(4))(x_in)
 # # c0 = Conv1D(4, 1, activation='relu')(sequence_in)
 c1 = Conv1D(latent_dim, 2, dilation_rate=1, padding='causal', activation='relu')(x_in)
@@ -115,7 +114,7 @@ promo_pred = decode_slice(promo_in)
 # yAgo_pred = decode_slice(yearAgo_in)
 
 
-# sequence in results overfitting!!!
+# Raw sequence in results overfitting!!!
 dnn_out = Dense(512, activation='relu')(Flatten()(seq_in))
 dnn_out = Dense(256, activation='relu')(dnn_out)
 # dnn_out = BatchNormalization()(dnn_out)
