@@ -8,7 +8,7 @@ This competition is a time series problem where we are required to predict the s
 
 ## Model Overview
 
-I build 3 models: a lightGBM, a CNN+DNN and a seq2seq RNN model. Final model was a weighted average of these models (where each model is stabilized by training multiple times with different random seeds then take the average), with special dealing with promotion, which I will discuss later. Each model separately can stay in top 1% in the private leaderboard.
+I build 3 models: a Gradient Boosting, a CNN+DNN and a seq2seq RNN model. Final model was a weighted average of these models (where each model is stabilized by training multiple times with different random seeds then take the average). Each model separately can stay in top 1% in the final ranking.
 
 **LGBM:** It is an upgraded version of the public kernels. More features, data and periods were fed to the model.
 
