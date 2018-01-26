@@ -10,7 +10,7 @@ This competition is a time series problem where we are required to predict the s
 
 I build 3 models: a Gradient Boosting, a CNN+DNN and a seq2seq RNN model. Final model was a weighted average of these models (where each model is stabilized by training multiple times with different random seeds then take the average). Each model separately can stay in top 1% in the final ranking.
 
-**LGBM:** It is an upgraded version of the public kernels. More features, data and periods were fed to the model.
+**LGBM:** It is an upgraded model from the public kernels. More features, data and periods were fed to the model.
 
 **CNN+DNN:** This is a traditional NN model, where the CNN part is a dilated causal convolution inspired by WaveNet, and the DNN part is 2 FC layers connected to raw sales sequences. Then the inputs are concatenated together with categorical embeddings and future promotions, and directly output to 16 future days of predictions.
 
