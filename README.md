@@ -1,6 +1,6 @@
 # Kaggle-Competition-Favorita
 
-This is 5th place solution for Kaggle competition Favorita Grocery Sales Forecasting.  
+This is the 5th place solution for Kaggle competition Favorita Grocery Sales Forecasting.  
 
 ## The Problem
 
@@ -20,6 +20,6 @@ I build 3 models: a Gradient Boosting, a CNN+DNN and a seq2seq RNN model. Final 
 
 Three models are in separate .py files as their filename tell.
 
-Before running the models, use the function *load_data()* in Utils.py to load and transform the raw data files, and use *save_unstack()* to save them to feather files. In the model codes, change the input of *load_unstack()* to the filename you saved. Then the models can be runned. Please read the codes of these functions for more details.
+Before running the models, download the data from the competition website, and add records of 0 with any existing store-item combo on every Dec 25th in the training data. Then use the function *load_data()* in Utils.py to load and transform the raw data files, and use *save_unstack()* to save them to feather files. In the model codes, change the input of *load_unstack()* to the filename you saved. Then the models can be runned. Please read the codes of these functions for more details.
 
 Note: if you are not using a GPU, change CudnnGRU to GRU in seq2seq.py
