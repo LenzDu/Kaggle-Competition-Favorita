@@ -169,8 +169,8 @@ for i in range(16):
     output_x = decoder_dense2(output_x)
 
     # gather outputs
-    if i == 5: decoder_outputs = output_x
-    elif i > 5: decoder_outputs = concatenate([decoder_outputs, output_x])
+    if i == 0: decoder_outputs = output_x
+    elif i > 0: decoder_outputs = concatenate([decoder_outputs, output_x])
 
     previous_x = output_x
 
